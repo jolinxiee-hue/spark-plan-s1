@@ -1345,7 +1345,7 @@ if(false)(function(){
   const btn    = document.getElementById('comm-btn');
   const bubble = document.getElementById('comm-bubble');
   const text   = document.getElementById('comm-text');
-  let open = false, idx = 0;
+  let open = true, idx = 1;
 
   const MSGS = [
     '报告指挥官！第一阶段能量充能87%，建议<strong>立即组队出征</strong>！赶紧点报名！🚀',
@@ -1355,6 +1355,10 @@ if(false)(function(){
     '数据分析完毕：2026年不参加星火计划的遗憾概率=100%。建议立即行动，指挥官！📊',
     '最多5人组队，可跨部门！快去物色你的战队队友，星际之旅等你来开启！🛸',
   ];
+
+  // show first message on load
+  text.innerHTML = MSGS[0];
+  bubble.classList.add('open');
 
   btn.addEventListener('click', ()=>{
     open = !open;
