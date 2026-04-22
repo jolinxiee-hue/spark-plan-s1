@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>星火计划S1 · 宣传海报</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;}
+
+.poster{
+  position:relative;
+  width:540px;
+  height:960px;
+  background:#020712;
+  overflow:hidden;
+  flex-shrink:0;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+
+/* ── Stars ── */
+#stars{position:absolute;inset:0;z-index:0;}
+
+/* ── Nebula blobs ── */
+.nebula-bg{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 20%, rgba(80,10,200,.18) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 55% at 85% 65%, rgba(0,80,200,.12) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 35% at 50% 90%, rgba(120,0,255,.1) 0%, transparent 60%);
+}
+
+/* ── Grid overlay ── */
+.grid-overlay{
+  position:absolute;inset:0;z-index:2;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(0,212,255,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,.04) 1px, transparent 1px);
+  background-size:40px 40px;
+}
+
+/* ── Content stack ── */
+.content{position:relative;z-index:10;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;padding:0 36px;}
+
+/* ── TOP BAR ── */
+.top-bar{
+  width:100%;display:flex;align-items:center;justify-content:space-between;
+  padding:28px 0 0;
+}
+.top-badge{
+  font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.3em;
+  color:rgba(0,212,255,.5);text-transform:uppercase;
+}
+.top-year{
+  font-family:'Orbitron',monospace;font-size:.75rem;font-weight:700;
+  color:rgba(0,212,255,.4);letter-spacing:.15em;
+}
+
+/* ── DIVIDER LINE ── */
+.h-line{
+  width:100%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,212,255,.35),rgba(168,85,247,.25),transparent);
+  margin:16px 0;
+}
+
+/* ── PLANET ── */
+.planet-wrap{
+  position:relative;width:280px;height:280px;margin:8px 0 0;flex-shrink:0;
+}
+#planet-c{display:block;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);}
+.planet-atm{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  border-radius:50%;border:1px solid rgba(0,212,255,.12);pointer-events:none;
+}
+.atm1{width:210px;height:210px;box-shadow:0 0 40px rgba(0,212,255,.1);}
+.atm2{width:240px;height:240px;border-color:rgba(168,85,247,.08);}
+.orb-ring{
+  position:absolute;top:50%;left:50%;
+  border-radius:50%;border:1px solid;pointer-events:none;
+}
+.orb-r1{width:258px;height:258px;transform:translate(-50%,-50%) rotateX(70deg);border-color:rgba(0,212,255,.2);}
+.orb-r2{width:278px;height:278px;transform:translate(-50%,-50%) rotateX(70deg) rotateZ(45deg);border-color:rgba(168,85,247,.15);}
+
+/* ── MAIN TITLE ── */
+.main-title-block{text-align:center;margin:20px 0 0;}
+.eyebrow{
+  font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.4em;
+  color:rgba(0,212,255,.65);text-transform:uppercase;margin-bottom:12px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.eyebrow::before,.eyebrow::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,255,.3));}
+.eyebrow::after{background:linear-gradient(90deg,rgba(0,212,255,.3),transparent);}
+
+.h1{
+  font-family:'Orbitron',monospace;
+  font-size:3rem;font-weight:900;line-height:1.08;
+  letter-spacing:.04em;
+  background:linear-gradient(135deg,#fff 0%,#a8d4ff 35%,#c084fc 65%,#818cf8 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  margin-bottom:10px;
+  text-shadow:none;
+  position:relative;
+}
+/* scanlines on title */
+.h1-wrap{position:relative;display:inline-block;}
+.h1-wrap::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,212,255,.025) 3px,rgba(0,212,255,.025) 4px);
+}
+.h1-sub{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:.95rem;font-weight:600;letter-spacing:.18em;
+  color:rgba(180,210,255,.55);margin-bottom:6px;
+}
+.h1-slug{
+  font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.25em;
+  color:rgba(0,212,255,.4);
+}
+
+/* ── STATS ROW ── */
+.stats-row{
+  display:flex;gap:0;width:100%;margin:22px 0 0;
+  border:1px solid rgba(0,212,255,.1);border-radius:10px;overflow:hidden;
+}
+.stat{
+  flex:1;padding:14px 10px;text-align:center;
+  background:rgba(4,14,32,.7);backdrop-filter:blur(10px);
+  border-right:1px solid rgba(0,212,255,.08);
+}
+.stat:last-child{border-right:none;}
+.stat-val{
+  font-family:'Orbitron',monospace;font-size:1.05rem;font-weight:700;
+  color:#00d4ff;display:block;margin-bottom:3px;
+  text-shadow:0 0 12px rgba(0,212,255,.4);
+}
+.stat-lbl{font-size:.65rem;color:rgba(200,220,255,.45);letter-spacing:.05em;font-weight:500;}
+
+/* ── TRACK CARDS ── */
+.tracks{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin:18px 0 0;}
+.trk{
+  border-radius:12px;padding:18px 16px;position:relative;overflow:hidden;border:1px solid;
+}
+.trk::before{
+  content:'';position:absolute;inset:0;border-radius:12px;
+  background:radial-gradient(ellipse 80% 60% at 50% 20%,var(--gc) 0%,transparent 65%);
+  opacity:.06;pointer-events:none;
+}
+.trk-blue{background:linear-gradient(155deg,rgba(0,16,40,.95),rgba(0,30,65,.9));border-color:rgba(0,212,255,.25);--gc:rgba(0,212,255,1);}
+.trk-purple{background:linear-gradient(155deg,rgba(16,4,40,.95),rgba(30,8,65,.9));border-color:rgba(168,85,247,.25);--gc:rgba(168,85,247,1);}
+.trk-icon{font-size:1.5rem;margin-bottom:8px;display:block;}
+.trk-badge{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.22em;text-transform:uppercase;margin-bottom:5px;}
+.trk-blue  .trk-badge{color:rgba(0,212,255,.7);}
+.trk-purple .trk-badge{color:rgba(168,85,247,.7);}
+.trk-name{font-size:.88rem;font-weight:800;color:rgba(220,235,255,.9);letter-spacing:-.01em;line-height:1.3;margin-bottom:8px;}
+.trk-tags{display:flex;flex-wrap:wrap;gap:4px;}
+.ttag{
+  font-size:.58rem;font-weight:600;padding:2px 7px;border-radius:3px;border:1px solid;
+}
+.trk-blue  .ttag{background:rgba(0,212,255,.07);border-color:rgba(0,212,255,.2);color:rgba(0,212,255,.75);}
+.trk-purple .ttag{background:rgba(168,85,247,.07);border-color:rgba(168,85,247,.2);color:rgba(168,85,247,.75);}
+
+/* ── CTA ── */
+.cta-wrap{width:100%;margin:18px 0 0;}
+.cta-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:16px 0;
+  font-family:'Orbitron',monospace;font-size:.82rem;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;color:#010a1a;
+  background:linear-gradient(135deg,#00d4ff,#0066ff);
+  border-radius:6px;text-decoration:none;
+  box-shadow:0 0 30px rgba(0,212,255,.4),0 0 60px rgba(0,100,255,.15);
+  position:relative;overflow:hidden;
+}
+.cta-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.2),transparent);
+}
+.cta-url{
+  text-align:center;margin-top:8px;
+  font-family:'Space Mono',monospace;font-size:.6rem;
+  color:rgba(0,212,255,.35);letter-spacing:.1em;
+}
+
+/* ── BOTTOM STRIP ── */
+.bottom-strip{
+  width:100%;margin-top:auto;padding:16px 0 24px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.bottom-left{
+  font-family:'Space Mono',monospace;font-size:.58rem;
+  color:rgba(0,212,255,.25);letter-spacing:.15em;
+}
+.bottom-right{
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:.62rem;font-weight:600;
+  color:rgba(200,220,255,.25);
+}
+.bottom-dots{display:flex;gap:5px;align-items:center;}
+.dot{width:5px;height:5px;border-radius:50%;}
+.dot-1{background:rgba(0,212,255,.5);}
+.dot-2{background:rgba(168,85,247,.4);}
+.dot-3{background:rgba(255,255,255,.15);}
+
+/* glow corner accents */
+.corner{position:absolute;width:60px;height:60px;z-index:3;pointer-events:none;}
+.corner-tl{top:0;left:0;border-top:1.5px solid rgba(0,212,255,.35);border-left:1.5px solid rgba(0,212,255,.35);}
+.corner-tr{top:0;right:0;border-top:1.5px solid rgba(168,85,247,.3);border-right:1.5px solid rgba(168,85,247,.3);}
+.corner-bl{bottom:0;left:0;border-bottom:1.5px solid rgba(168,85,247,.3);border-left:1.5px solid rgba(168,85,247,.3);}
+.corner-br{bottom:0;right:0;border-bottom:1.5px solid rgba(0,212,255,.35);border-right:1.5px solid rgba(0,212,255,.35);}
+</style>
+</head>
+<body>
+<div class="poster" id="poster">
+  <!-- corner accents -->
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <canvas id="stars"></canvas>
+  <div class="nebula-bg"></div>
+  <div class="grid-overlay"></div>
+
+  <div class="content">
+    <!-- Top bar -->
+    <div class="top-bar">
+      <span class="top-badge">个人事业部 · AI创新大赛</span>
+      <span class="top-year">2026</span>
+    </div>
+    <div class="h-line"></div>
+
+    <!-- Planet -->
+    <div class="planet-wrap">
+      <div class="planet-atm atm1"></div>
+      <div class="planet-atm atm2"></div>
+      <div class="orb-ring orb-r1"></div>
+      <div class="orb-ring orb-r2"></div>
+      <canvas id="planet-c" width="190" height="190"></canvas>
+    </div>
+
+    <!-- Main title -->
+    <div class="main-title-block">
+      <div class="eyebrow">SPARK PLAN · MISSION S1</div>
+      <div class="h1-wrap">
+        <div class="h1">星火计划S1</div>
+      </div>
+      <div class="h1-sub">星际探索任务 · AI创新探索大赛</div>
+      <div class="h1-slug">PERSONAL BU · 2026.01 — 2026.12</div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat">
+        <span class="stat-val">全员</span>
+        <span class="stat-lbl">参赛对象</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">双赛道</span>
+        <span class="stat-lbl">并行竞赛</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">Q2·Q4</span>
+        <span class="stat-lbl">两期举办</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">≤5人</span>
+        <span class="stat-lbl">自由组队</span>
+      </div>
+    </div>
+
+    <!-- Tracks -->
+    <div class="tracks">
+      <div class="trk trk-blue">
+        <span class="trk-icon">⚡</span>
+        <div class="trk-badge">TRACK 01 · 动力舱</div>
+        <div class="trk-name">AI 提效突破<br>星火提效专家</div>
+        <div class="trk-tags">
+          <span class="ttag">流程自动化</span>
+          <span class="ttag">AI运营</span>
+          <span class="ttag">智能测试</span>
+        </div>
+      </div>
+      <div class="trk trk-purple">
+        <span class="trk-icon">🔭</span>
+        <div class="trk-badge">TRACK 02 · 科研舱</div>
+        <div class="trk-name">AI 创新探索<br>星火探索家</div>
+        <div class="trk-tags">
+          <span class="ttag">产品原型</span>
+          <span class="ttag">增长实验</span>
+          <span class="ttag">新场景</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-wrap">
+      <a class="cta-btn" href="https://spark-plan-s1.netlify.app" target="_blank">
+        <span>🚀</span><span>立即报名出征</span>
+      </a>
+      <div class="cta-url">spark-plan-s1.netlify.app</div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="bottom-strip">
+      <span class="bottom-left">PERSONAL BU · 2026</span>
+      <div class="bottom-dots">
+        <div class="dot dot-1"></div>
+        <div class="dot dot-2"></div>
+        <div class="dot dot-3"></div>
+      </div>
+      <span class="bottom-right">年度AI创新激励计划</span>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Stars ── */
+(function(){
+  const c = document.getElementById('stars');
+  const poster = document.getElementById('poster');
+  c.width = poster.offsetWidth;
+  c.height = poster.offsetHeight;
+  c.style.position = 'absolute';
+  c.style.top = '0'; c.style.left = '0';
+  c.style.zIndex = '0';
+  const ctx = c.getContext('2d');
+  const STARS = Array.from({length:200},()=>({
+    x:Math.random()*c.width, y:Math.random()*c.height,
+    r:Math.random()*1.3+.2, a:Math.random()*.7+.25,
+    ts:Math.random()*.03+.008, to:Math.random()*Math.PI*2,
+  }));
+  let t=0;
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    t+=.015;
+    STARS.forEach(s=>{
+      const f=.4+.6*Math.sin(t*s.ts*70+s.to);
+      ctx.save(); ctx.globalAlpha=s.a*f;
+      ctx.fillStyle='#ddeeff';
+      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── Planet ── */
+(function(){
+  const pc = document.getElementById('planet-c');
+  const ctx = pc.getContext('2d');
+  const W=pc.width, H=pc.height, cx=W/2, cy=H/2, R=W/2-4;
+  let ang=0;
+  const NODES = Array.from({length:20},(_,i)=>{
+    const a=(i/20)*Math.PI*2+1.3, r=(.3+(i%3)*.22)*R;
+    return {x:cx+Math.cos(a)*r+Math.sin(a*2.3+i)*10, y:cy+Math.sin(a)*r+Math.cos(a*1.9+i)*10};
+  });
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.clip();
+    const bg=ctx.createRadialGradient(cx-R*.25,cy-R*.25,0,cx,cy,R);
+    bg.addColorStop(0,'rgba(60,130,255,.3)');
+    bg.addColorStop(.4,'rgba(15,35,110,.88)');
+    bg.addColorStop(.75,'rgba(50,10,130,.88)');
+    bg.addColorStop(1,'rgba(4,8,30,1)');
+    ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+    ctx.save();
+    ctx.translate(cx,cy); ctx.rotate(ang); ctx.translate(-cx,-cy);
+    ctx.lineWidth=.5;
+    for(let i=0;i<NODES.length;i++){
+      for(let j=i+1;j<NODES.length;j++){
+        const d=Math.hypot(NODES[i].x-NODES[j].x,NODES[i].y-NODES[j].y);
+        if(d<R*.72){
+          ctx.strokeStyle=`rgba(0,212,255,${.25*(1-d/(R*.72))})`;
+          ctx.beginPath(); ctx.moveTo(NODES[i].x,NODES[i].y); ctx.lineTo(NODES[j].x,NODES[j].y); ctx.stroke();
+        }
+      }
+    }
+    NODES.forEach(n=>{
+      const g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,3.5);
+      g.addColorStop(0,'rgba(0,212,255,.9)'); g.addColorStop(1,'rgba(0,212,255,0)');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(n.x,n.y,3.5,0,Math.PI*2); ctx.fill();
+    });
+    ctx.restore();
+    const rim=ctx.createRadialGradient(cx,cy,R*.82,cx,cy,R);
+    rim.addColorStop(0,'transparent'); rim.addColorStop(1,'rgba(0,100,255,.22)');
+    ctx.fillStyle=rim; ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+    ang+=.003;
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+</script>
+</body>
+</html>
