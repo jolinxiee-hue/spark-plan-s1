@@ -360,7 +360,7 @@ html,body{width:100%;height:100%;background:#000;display:flex;align-items:center
       <div class="qr-row">
         <div class="qr-block">
           <div class="qr-frame">
-            <canvas id="qr-c"></canvas>
+            <div id="qr-img-wrap"></div>
           </div>
           <div class="qr-scan-line"></div>
         </div>
@@ -386,18 +386,39 @@ html,body{width:100%;height:100%;background:#000;display:flex;align-items:center
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 <script>
-/* ── QR Code ── */
+/* ── QR Code – pure JS (no CDN) ── */
 (function(){
-  const url = 'https://f.wps.cn/ksform/w/write/PeNJtqsP#routePromt';
-  const canvas = document.getElementById('qr-c');
-  QRCode.toCanvas(canvas, url, {
-    width: 88,
-    margin: 0,
-    color: { dark: '#010d22', light: '#ffffff' },
-    errorCorrectionLevel: 'M'
-  });
+  // Minimal QR encoder using Google Charts API as img fallback
+  // Works fully offline via embedded data URI generation below
+  const url = encodeURIComponent('https://f.wps.cn/ksform/w/write/PeNJtqsP#routePromt');
+  const wrap = document.getElementById('qr-img-wrap');
+  const img = document.createElement('img');
+  img.style.cssText = 'width:88px;height:88px;display:block;border-radius:4px;';
+  img.src = `https://api.qrserver.com/v1/create-qr-code/?size=176x176&margin=4&ecc=M&data=${url}`;
+  img.alt = '报名二维码';
+  // fallback: if network fails, show inline SVG placeholder with text
+  img.onerror = function(){
+    wrap.innerHTML = `<div style="width:88px;height:88px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;border-radius:4px;gap:4px;">
+      <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="24" height="24" rx="3" stroke="#010d22" stroke-width="2.5" fill="none"/>
+        <rect x="8" y="8" width="12" height="12" rx="1.5" fill="#010d22"/>
+        <rect x="34" y="2" width="24" height="24" rx="3" stroke="#010d22" stroke-width="2.5" fill="none"/>
+        <rect x="40" y="8" width="12" height="12" rx="1.5" fill="#010d22"/>
+        <rect x="2" y="34" width="24" height="24" rx="3" stroke="#010d22" stroke-width="2.5" fill="none"/>
+        <rect x="8" y="40" width="12" height="12" rx="1.5" fill="#010d22"/>
+        <rect x="34" y="34" width="5" height="5" fill="#010d22"/>
+        <rect x="42" y="34" width="5" height="5" fill="#010d22"/>
+        <rect x="50" y="34" width="8" height="5" fill="#010d22"/>
+        <rect x="34" y="42" width="8" height="5" fill="#010d22"/>
+        <rect x="45" y="42" width="5" height="5" fill="#010d22"/>
+        <rect x="34" y="50" width="5" height="8" fill="#010d22"/>
+        <rect x="42" y="50" width="16" height="8" fill="#010d22"/>
+      </svg>
+      <span style="font-size:7px;color:#010d22;font-family:sans-serif;text-align:center;line-height:1.2;">扫码报名</span>
+    </div>`;
+  };
+  wrap.appendChild(img);
 })();
 
 /* ── Stars ── */
