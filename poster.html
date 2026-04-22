@@ -313,7 +313,7 @@ html,body{width:100%;min-height:100vh;background:#000;display:flex;align-items:c
         <div class="qr-meta">
           <div class="qr-tag">REGISTRATION</div>
           <div class="qr-cta">扫码报名</div>
-          <div class="qr-hint">填写报名表·即刻出征</div>
+          <div class="qr-hint">扫码访问报名站·即刻出征</div>
         </div>
       </div>
       <!-- divider -->
@@ -346,11 +346,11 @@ html,body{width:100%;min-height:100vh;background:#000;display:flex;align-items:c
 <script>
 /* QR – Registration (static img) */
 (function(){
-  const url = encodeURIComponent('https://f.wps.cn/ksform/w/write/PeNJtqsP#routePromt');
+  const url = encodeURIComponent('https://o.wpsgo.com/app/41000207/3YdBOZNBUrzE/');
   const wrap = document.getElementById('qr-reg');
   const img = document.createElement('img');
   img.style.cssText = 'width:80px;height:80px;display:block;border-radius:4px;';
-  img.src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=3&ecc=M&data=${url}`;
+  img.src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=3&ecc=M&data=${url}&format=png`;
   img.alt = '报名二维码';
   wrap.appendChild(img);
 })();
