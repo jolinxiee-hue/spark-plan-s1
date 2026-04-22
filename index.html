@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星火计划 S1 · 星际探索任务 · 个人事业部AI创新大赛</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Space+Mono:ital,wght@0,400;0,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────
+   DESIGN TOKENS
+───────────────────────────────────────── */
+:root {
+  --bg:          #020712;
+  --bg-mid:      #060e1d;
+  --blue:        #00d4ff;
+  --blue-dim:    rgba(0,212,255,.15);
+  --blue-glow:   rgba(0,212,255,.5);
+  --purple:      #a855f7;
+  --purple-dim:  rgba(168,85,247,.15);
+  --purple-glow: rgba(168,85,247,.5);
+  --green-led:   #00ff99;
+  --star-white:  #ddeeff;
+  --ink:         rgba(210,230,255,.9);
+  --ink-50:      rgba(200,220,255,.5);
+  --ink-30:      rgba(200,220,255,.3);
+  --glass:       rgba(4,14,32,.75);
+  --glass-b:     rgba(0,212,255,.12);
+  --font-d:      'Orbitron', 'Space Mono', monospace;
+  --font-m:      'Space Mono', monospace;
+  --font-b:      'Plus Jakarta Sans', 'Noto Sans SC', sans-serif;
+  --ease-spring: cubic-bezier(.34,1.56,.64,1);
+}
+
+/* ─────────────────────────────────────────
+   RESET
+───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+html { scroll-behavior: smooth; font-size: 17px; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-b);
+  line-height: 1.7;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { text-decoration: none; }
+
+/* ─────────────────────────────────────────
+   SPACE BACKGROUND LAYERS
+───────────────────────────────────────── */
+#star-canvas {
+  position: fixed; top:0; left:0;
+  width:100%; height:100%;
+  z-index: 0; pointer-events: none;
+}
+.nebula {
+  position: fixed; top:0; left:0;
+  width:100%; height:100%;
+  z-index: 1; pointer-events: none;
+  will-change: transform;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 25%, rgba(80,10,200,.1) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 70% at 85% 70%, rgba(0,80,200,.07) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 55% at 55% 5%,  rgba(120,0,255,.06) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 40% at 30% 90%, rgba(0,150,255,.05) 0%, transparent 65%);
+  animation: nebula-drift 40s ease-in-out infinite alternate;
+}
+@keyframes nebula-drift {
+  0%   { transform: translate(0,0) scale(1); }
+  100% { transform: translate(-4%,3%) scale(1.06); }
+}
+
+/* ─────────────────────────────────────────
+   LAYOUT
+───────────────────────────────────────── */
+.site { position: relative; z-index: 10; }
+
+/* ─────────────────────────────────────────
+   NAVIGATION
+───────────────────────────────────────── */
+.nav {
+  position: fixed; top:0; left:0; right:0;
+  height: 68px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px;
+  background: rgba(2,7,18,.82);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(0,212,255,.08);
+  z-index: 200;
+}
+
+/* Logo */
+.logo {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-d);
+  font-size: 1rem; font-weight: 700;
+  color: var(--blue);
+  letter-spacing: .12em;
+  text-shadow: 0 0 20px rgba(0,212,255,.4);
+}
+.logo-s1 { color: rgba(255,255,255,.45); font-weight: 400; }
+
+/* Rocket particle emitter */
+.rocket-wrap {
+  position: relative; width:30px; height:30px;
+  display:flex; align-items:center; justify-content:center;
+}
+.rocket-emoji {
+  font-size:18px;
+  transform: rotate(-45deg);
+  filter: drop-shadow(0 0 5px var(--blue));
+  position: relative; z-index: 2;
+}
+.prt { position:absolute; border-radius:50%; opacity:0; pointer-events:none; }
+
+/* Mission phase nodes */
+.phase-nav {
+  display: flex; align-items: center;
+}
+.ph-node { display:flex; flex-direction:column; align-items:center; position:relative; }
+.ph-track {
+  width:44px; height:2px;
+  background: linear-gradient(90deg, rgba(0,212,255,.25), rgba(0,212,255,.5));
+  position: relative; overflow:hidden;
+}
+.ph-track::after {
+  content:'';
+  position:absolute; top:0; left:-60%;
+  width:50%; height:100%;
+  background: linear-gradient(90deg, transparent, rgba(0,212,255,.9), transparent);
+  animation: track-pulse 2.5s linear infinite;
+}
+@keyframes track-pulse {
+  0% { left:-60%; } 100% { left:120%; }
+}
+.ph-station {
+  width:38px; height:38px; border-radius:50%;
+  border: 1.5px solid rgba(0,212,255,.25);
+  background: rgba(0,15,35,.8);
+  display:flex; align-items:center; justify-content:center;
+  font-family: var(--font-m); font-size:.62rem;
+  color: rgba(0,212,255,.4);
+  position:relative; cursor:pointer;
+  transition: all .3s ease;
+}
+.ph-station:hover { border-color: rgba(0,212,255,.5); color:rgba(0,212,255,.7); }
+.ph-station.on {
+  border-color: var(--blue);
+  color: var(--blue);
+  box-shadow: 0 0 14px rgba(0,212,255,.45), 0 0 28px rgba(0,212,255,.15);
+}
+/* rotating halos on active */
+.ph-station.on::before, .ph-station.on::after {
+  content:''; position:absolute; border-radius:50%; border-style:solid;
+}
+.ph-station.on::before {
+  width:calc(100% + 14px); height:calc(100% + 14px);
+  border-width:1.5px; border-color:rgba(0,212,255,.4);
+  animation: halo 4s linear infinite;
+}
+.ph-station.on::after {
+  width:calc(100% + 24px); height:calc(100% + 24px);
+  border-width:1px; border-color:rgba(0,212,255,.18);
+  animation: halo 8s linear infinite reverse;
+}
+@keyframes halo { to { transform:rotate(360deg); } }
+.ph-label {
+  font-family:var(--font-m); font-size:.52rem;
+  color:rgba(0,212,255,.35); margin-top:3px; letter-spacing:.05em;
+  white-space:nowrap;
+}
+.ph-station.on ~ .ph-label { color:var(--blue); }
+
+/* ─────────────────────────────────────────
+   HERO
+───────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding: 120px 40px 80px;
+  position:relative; overflow:hidden;
+}
+
+/* Planet system */
+.planet-system {
+  position:relative;
+  width:360px; height:360px;
+  margin-bottom: 52px;
+  flex-shrink:0;
+}
+.planet-canvas-wrap {
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  width:220px; height:220px; border-radius:50%;
+  overflow:hidden;
+  box-shadow: 0 0 60px rgba(0,80,200,.35), 0 0 120px rgba(80,0,200,.18),
+              inset -15px -15px 40px rgba(0,0,50,.8);
+}
+#planet-canvas { display:block; width:100%; height:100%; }
+
+/* atmosphere rings */
+.atm {
+  position:absolute; top:50%; left:50%;
+  border-radius:50%; border: 1px solid;
+  pointer-events:none;
+}
+.atm-1 {
+  width:240px; height:240px;
+  transform:translate(-50%,-50%);
+  border-color:rgba(0,212,255,.08);
+  box-shadow: 0 0 30px rgba(0,212,255,.08);
+}
+.atm-2 {
+  width:260px; height:260px;
+  transform:translate(-50%,-50%);
+  border-color:rgba(0,100,255,.06);
+}
+
+/* orbits — tilted ellipses via CSS transform */
+.orbit-ring {
+  position:absolute; top:50%; left:50%;
+  border-radius:50%; border: 1px solid;
+  pointer-events:none;
+}
+.orb-1 {
+  width:300px; height:300px;
+  transform:translate(-50%,-50%) rotateX(68deg);
+  border-color:rgba(0,212,255,.22);
+  box-shadow: 0 0 6px rgba(0,212,255,.1);
+}
+.orb-2 {
+  width:350px; height:350px;
+  transform:translate(-50%,-50%) rotateX(68deg) rotateZ(40deg);
+  border-color:rgba(168,85,247,.2);
+  box-shadow: 0 0 6px rgba(168,85,247,.1);
+}
+
+/* Hero text */
+.hero-copy {
+  text-align:center;
+  max-width:760px;
+  position:relative;
+}
+/* scanlines overlay */
+.scanlines {
+  position:relative;
+  &::after {
+    content:'';
+    position:absolute; inset:0; pointer-events:none;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(0,212,255,.015) 2px, rgba(0,212,255,.015) 4px
+    );
+  }
+}
+.hero-eyebrow {
+  font-family:var(--font-m); font-size:.72rem;
+  color:var(--blue); letter-spacing:.42em;
+  text-transform:uppercase; opacity:.8;
+  margin-bottom:16px;
+}
+.hero-eyebrow::before { content:'[ '; }
+.hero-eyebrow::after  { content:' ]'; }
+
+.hero-h1 {
+  font-family: var(--font-d);
+  font-size: clamp(2.2rem, 6vw, 4.2rem);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: .04em;
+  background: linear-gradient(135deg,
+    #ffffff 0%, #a8d4ff 30%, #c084fc 65%, #818cf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 14px;
+}
+.hero-h1-sub {
+  font-family: var(--font-b);
+  font-size: clamp(1rem, 2.2vw, 1.35rem);
+  font-weight: 600;
+  letter-spacing: .12em;
+  color: rgba(180,210,255,.6);
+  margin-bottom: 10px;
+}
+.hero-slug {
+  font-family: var(--font-m);
+  font-size: .78rem;
+  letter-spacing: .25em;
+  color: rgba(0,212,255,.5);
+  margin-bottom: 34px;
+}
+.hero-meta {
+  display:flex; gap:24px; justify-content:center; flex-wrap:wrap;
+  font-family:var(--font-b); font-size:.82rem; font-weight:600;
+  color:rgba(0,212,255,.6);
+  margin-bottom: 42px;
+}
+.hero-meta span::before { content:'◈ '; color:var(--blue); }
+
+/* CTA Button */
+.btn-cta {
+  display:inline-flex; align-items:center; gap:10px;
+  padding:15px 48px;
+  font-family:var(--font-d); font-size:.82rem;
+  font-weight:700; letter-spacing:.2em; text-transform:uppercase;
+  color:#010a1a;
+  background: linear-gradient(135deg, #00d4ff 0%, #0066ff 100%);
+  border:none; border-radius:3px;
+  cursor:pointer; position:relative; overflow:hidden;
+  transition: all .3s ease;
+  box-shadow: 0 0 30px rgba(0,212,255,.4), 0 0 60px rgba(0,100,255,.2);
+}
+.btn-cta::before {
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(135deg, rgba(255,255,255,.25), transparent);
+  opacity:0; transition:opacity .3s;
+}
+.btn-cta:hover {
+  transform:translateY(-3px);
+  box-shadow: 0 0 50px rgba(0,212,255,.6), 0 0 100px rgba(0,100,255,.3);
+}
+.btn-cta:hover::before { opacity:1; }
+
+/* cursor blink */
+.blink { animation: blink .9s step-end infinite; }
+@keyframes blink { 50% { opacity:0; } }
+
+/* ─────────────────────────────────────────
+   SECTION WRAPPER
+───────────────────────────────────────── */
+.wrap {
+  max-width:1080px; margin:0 auto;
+  padding: 80px 40px;
+}
+.sec-head { text-align:center; margin-bottom:56px; }
+.sec-tag {
+  font-family:var(--font-m); font-size:.68rem;
+  color:var(--blue); letter-spacing:.45em; text-transform:uppercase;
+  opacity:.75; margin-bottom:12px;
+}
+.sec-title {
+  font-family:var(--font-d); font-size:clamp(1.6rem,3vw,2.2rem);
+  font-weight:700; letter-spacing:.04em; color:var(--ink);
+}
+
+/* ─────────────────────────────────────────
+   OVERVIEW — split layout
+───────────────────────────────────────── */
+.overview-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:16px;
+}
+.ov-card {
+  background:var(--glass);
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(0,212,255,.1);
+  border-radius:12px;
+  padding:28px 24px;
+  position:relative; overflow:hidden;
+  transition: transform .3s var(--ease-spring), border-color .3s;
+}
+.ov-card:hover {
+  transform:translateY(-4px);
+  border-color:rgba(0,212,255,.25);
+}
+.ov-card::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, var(--blue), var(--purple));
+  opacity:.5;
+}
+.ov-num {
+  font-family:var(--font-m); font-size:.68rem;
+  color:rgba(0,212,255,.45); letter-spacing:.28em; margin-bottom:10px;
+}
+.ov-val {
+  font-family:var(--font-d); font-size:1.7rem; font-weight:700;
+  color:var(--blue); margin-bottom:6px;
+  text-shadow:0 0 20px rgba(0,212,255,.4);
+}
+.ov-label { font-size:1rem; color:var(--ink-50); line-height:1.8; font-weight:500; }
+
+/* ─────────────────────────────────────────
+   MISSION PHASE CARDS
+───────────────────────────────────────── */
+.phases-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(230px,1fr));
+  gap:18px;
+}
+.mission-card {
+  background:rgba(4,12,28,.82);
+  backdrop-filter:blur(24px);
+  border:1px solid rgba(0,212,255,.1);
+  border-radius:18px;
+  padding:28px 22px 24px;
+  position:relative; overflow:hidden;
+  cursor:pointer;
+  transition: transform .4s var(--ease-spring), border-color .4s, box-shadow .4s;
+}
+/* porthole corner accents */
+.mission-card::before, .mission-card::after {
+  content:''; position:absolute;
+  width:18px; height:18px;
+  border-style:solid; border-color:rgba(0,212,255,.2);
+}
+.mission-card::before {
+  top:10px; left:10px;
+  border-width:1.5px 0 0 1.5px;
+  border-radius:4px 0 0 0;
+}
+.mission-card::after {
+  bottom:10px; right:10px;
+  border-width:0 1.5px 1.5px 0;
+  border-radius:0 0 4px 0;
+}
+.mission-card:hover {
+  transform:translateY(-6px);
+  border-color:rgba(0,212,255,.28);
+  box-shadow: 0 24px 60px rgba(0,0,0,.45), 0 0 30px rgba(0,212,255,.08);
+}
+/* scan-beam */
+.scan-beam {
+  position:absolute; left:0; right:0; top:-120%;
+  height:60%; pointer-events:none;
+  background:linear-gradient(180deg,
+    transparent 0%, rgba(0,212,255,.04) 40%,
+    rgba(0,212,255,.09) 50%, rgba(0,212,255,.04) 60%,
+    transparent 100%
+  );
+  transition:none;
+}
+.mission-card:hover .scan-beam {
+  animation: scan-sweep .9s ease-out forwards;
+}
+@keyframes scan-sweep {
+  0%  { top:-120%; }
+  100%{ top: 220%; }
+}
+.mission-num {
+  font-family:var(--font-m); font-size:.66rem;
+  color:rgba(0,212,255,.45); letter-spacing:.28em; margin-bottom:14px;
+}
+.mission-status {
+  position:absolute; top:26px; right:22px;
+  width:10px; height:10px; border-radius:50%;
+  background:rgba(80,100,130,.35);
+  border:1px solid rgba(80,100,130,.3);
+}
+.mission-status.on {
+  background:var(--green-led);
+  border-color:var(--green-led);
+  box-shadow:0 0 8px rgba(0,255,153,.7), 0 0 18px rgba(0,255,153,.3);
+  animation: led-breathe 2s ease-in-out infinite;
+}
+@keyframes led-breathe {
+  0%,100%{ box-shadow:0 0 8px rgba(0,255,153,.7),0 0 18px rgba(0,255,153,.3); }
+  50%    { box-shadow:0 0 14px rgba(0,255,153,1),0 0 32px rgba(0,255,153,.5); opacity:.7; }
+}
+.mission-title {
+  font-family:var(--font-b); font-size:1.2rem; font-weight:800;
+  color:var(--ink); letter-spacing:-.01em; margin-bottom:8px; line-height:1.3;
+}
+.mission-period {
+  font-family:var(--font-m); font-size:.72rem;
+  color:var(--blue); opacity:.8; margin-bottom:14px;
+}
+.mission-desc {
+  font-size:.97rem; color:var(--ink-50); line-height:1.8; font-weight:500;
+}
+
+/* ─────────────────────────────────────────
+   DUAL TRACK MODULES
+───────────────────────────────────────── */
+.tracks-layout {
+  display:grid;
+  grid-template-columns:1fr 60px 1fr;
+  gap:0; align-items:stretch;
+}
+.track-module {
+  border-radius:20px;
+  padding:40px 32px;
+  position:relative; overflow:hidden;
+  border:1px solid;
+  transition: transform .4s var(--ease-spring), border-color .4s, box-shadow .4s;
+}
+.track-module::before {
+  content:''; position:absolute;
+  inset:0; border-radius:20px;
+  background:radial-gradient(ellipse 80% 60% at 50% 30%, var(--glow-color) 0%, transparent 60%);
+  opacity:.04; pointer-events:none;
+  transition:opacity .4s;
+}
+.track-module:hover::before { opacity:.09; }
+.track-module:hover {
+  transform:scale(1.025);
+  box-shadow: 0 24px 70px rgba(0,0,0,.4);
+}
+.trk-power {
+  background:linear-gradient(155deg, rgba(0,18,45,.92), rgba(0,35,75,.88));
+  border-color:rgba(0,212,255,.22);
+  --glow-color: rgba(0,212,255,1);
+}
+.trk-power:hover { border-color:rgba(0,212,255,.5); }
+.trk-research {
+  background:linear-gradient(155deg, rgba(18,5,45,.92), rgba(35,10,75,.88));
+  border-color:rgba(168,85,247,.22);
+  --glow-color: rgba(168,85,247,1);
+}
+.trk-research:hover { border-color:rgba(168,85,247,.5); }
+
+.trk-icon {
+  font-size:3rem; display:block;
+  margin-bottom:22px;
+  filter:drop-shadow(0 0 14px var(--ic));
+}
+.trk-power   .trk-icon { --ic:var(--blue);   }
+.trk-research .trk-icon { --ic:var(--purple); }
+
+.trk-badge {
+  font-family:var(--font-m); font-size:.72rem;
+  letter-spacing:.22em; text-transform:uppercase;
+  margin-bottom:10px; opacity:.9;
+}
+.trk-power   .trk-badge { color:var(--blue); }
+.trk-research .trk-badge { color:var(--purple); }
+
+.trk-title {
+  font-family:var(--font-b); font-size:1.45rem; font-weight:800;
+  color:var(--ink); letter-spacing:-.01em;
+  margin-bottom:16px; line-height:1.3;
+}
+.trk-desc {
+  font-size:.97rem; color:var(--ink-50); line-height:1.85; margin-bottom:24px; font-weight:500;
+}
+.trk-tags { display:flex; flex-wrap:wrap; gap:8px; }
+.tag {
+  font-family:var(--font-b); font-size:.75rem; font-weight:600; letter-spacing:.02em;
+  padding:5px 13px; border-radius:4px; border:1px solid;
+}
+.trk-power   .tag { background:rgba(0,212,255,.07); border-color:rgba(0,212,255,.22); color:rgba(0,212,255,.78); }
+.trk-research .tag { background:rgba(168,85,247,.07); border-color:rgba(168,85,247,.22); color:rgba(168,85,247,.78); }
+
+/* Energy pipeline */
+.pipe {
+  display:flex; flex-direction:column;
+  align-items:center;
+  padding: 32px 0;
+  position:relative;
+}
+.pipe-node {
+  width:14px; height:14px; border-radius:50%;
+  border:2px solid; background:rgba(4,14,32,.9);
+  flex-shrink:0;
+  position:relative; z-index:2;
+}
+.pipe-node-top  { border-color:var(--blue);   box-shadow:0 0 10px rgba(0,212,255,.5); }
+.pipe-node-bot  { border-color:var(--purple); box-shadow:0 0 10px rgba(168,85,247,.5); }
+.pipe-tube {
+  width:4px; flex:1; min-height:80px;
+  border-radius:2px;
+  background:linear-gradient(180deg, var(--blue), var(--purple));
+  box-shadow:0 0 8px rgba(0,212,255,.25), 0 0 14px rgba(168,85,247,.15);
+  position:relative; overflow:hidden;
+}
+.pipe-tube::after {
+  content:''; position:absolute; top:-30%; width:100%; height:25%;
+  background:linear-gradient(180deg, transparent, rgba(255,255,255,.75), transparent);
+  animation:pipe-flow 1.8s linear infinite;
+}
+@keyframes pipe-flow { 0%{top:-30%} 100%{top:120%} }
+.pipe-label {
+  font-family:var(--font-m); font-size:.5rem;
+  color:rgba(0,212,255,.4); letter-spacing:.08em;
+  writing-mode:vertical-rl; text-orientation:mixed;
+  margin: 6px 0;
+}
+
+/* ─────────────────────────────────────────
+   PRIZES
+───────────────────────────────────────── */
+.prizes-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+.prize-card {
+  border-radius:16px;
+  padding:32px 24px;
+  text-align:center;
+  border:1px solid;
+  position:relative; overflow:hidden;
+  transition: transform .3s var(--ease-spring), box-shadow .3s;
+}
+.prize-card:hover { transform:translateY(-5px); }
+.prize-gold   { background:linear-gradient(155deg,rgba(20,14,4,.9),rgba(40,28,4,.85)); border-color:rgba(255,200,50,.25); }
+.prize-silver { background:linear-gradient(155deg,rgba(8,14,22,.9),rgba(16,24,36,.85)); border-color:rgba(180,200,220,.2); }
+.prize-bronze { background:linear-gradient(155deg,rgba(20,10,4,.9),rgba(36,18,6,.85)); border-color:rgba(200,130,80,.22); }
+.prize-card:hover { box-shadow:0 20px 60px rgba(0,0,0,.4); }
+.prize-icon { font-size:2.4rem; margin-bottom:10px; display:block; }
+.prize-name {
+  font-family:var(--font-m); font-size:.68rem; letter-spacing:.22em;
+  text-transform:uppercase; margin-bottom:14px;
+}
+.prize-gold   .prize-name { color:#ffd700; text-shadow:0 0 14px rgba(255,215,0,.3); }
+.prize-silver .prize-name { color:#c0c8d8; }
+.prize-bronze .prize-name { color:#cd7f32; }
+/* prize main award line */
+.prize-main {
+  font-family:var(--font-b); font-size:1.75rem; font-weight:900;
+  color:var(--ink); margin-bottom:2px; letter-spacing:-.02em; line-height:1.15;
+}
+.prize-count {
+  display:block; font-size:.95rem; font-weight:600;
+  color:var(--ink-50); margin-top:8px; margin-bottom:22px; letter-spacing:.01em;
+}
+/* prize perks block */
+.prize-perks {
+  border-top:1px solid rgba(255,255,255,.07);
+  padding-top:14px; text-align:left;
+}
+.perks-label {
+  font-family:var(--font-b); font-size:.75rem; font-weight:700;
+  letter-spacing:.06em; text-transform:uppercase;
+  color:var(--ink-30); margin-bottom:8px;
+}
+.perks-list {
+  font-size:.85rem; color:var(--ink-50); line-height:1.85; font-weight:500;
+}
+
+/* ─────────────────────────────────────────
+   REGISTRATION CTA BLOCK
+───────────────────────────────────────── */
+.cta-block {
+  text-align:center; padding:100px 40px 120px;
+  position:relative;
+}
+.cta-glow {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:700px; height:700px; border-radius:50%;
+  background:radial-gradient(circle, rgba(0,80,200,.07) 0%, transparent 65%);
+  pointer-events:none;
+}
+.cta-tag  { font-family:var(--font-m); font-size:.68rem; color:var(--blue); letter-spacing:.42em; text-transform:uppercase; opacity:.7; margin-bottom:16px; }
+.cta-h2   { font-family:var(--font-d); font-size:clamp(1.7rem,3.5vw,2.5rem); font-weight:700; letter-spacing:.05em; margin-bottom:14px; }
+.cta-sub  { font-size:1.02rem; color:var(--ink-50); margin-bottom:44px; max-width:500px; margin-left:auto; margin-right:auto; font-weight:500; line-height:1.8; }
+.btn-cta-lg {
+  display:inline-flex; align-items:center; gap:12px;
+  padding:18px 64px;
+  font-family:var(--font-d); font-size:.9rem;
+  font-weight:700; letter-spacing:.2em; text-transform:uppercase;
+  color:#010a1a;
+  background:linear-gradient(135deg, #00d4ff, #0066ff);
+  border:none; border-radius:3px;
+  cursor:pointer; position:relative; overflow:hidden;
+  transition:all .3s ease;
+  box-shadow:0 0 40px rgba(0,212,255,.4), 0 0 80px rgba(0,100,255,.2);
+}
+.btn-cta-lg::before {
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(135deg, rgba(255,255,255,.22), transparent);
+  opacity:0; transition:opacity .3s;
+}
+.btn-cta-lg:hover { transform:translateY(-3px); box-shadow:0 0 60px rgba(0,212,255,.6), 0 0 120px rgba(0,100,255,.3); }
+.btn-cta-lg:hover::before { opacity:1; }
+
+/* ─────────────────────────────────────────
+   COMMUNICATOR WIDGET
+───────────────────────────────────────── */
+.comm {
+  position:fixed; bottom:30px; right:30px;
+  z-index:300;
+}
+.comm-btn {
+  width:58px; height:58px; border-radius:50%;
+  background:linear-gradient(135deg, #0a1628, #18083a);
+  border:2px solid var(--blue);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:1.5rem; position:relative; z-index:2;
+  box-shadow:0 0 20px rgba(0,212,255,.4);
+  animation:comm-pulse 3s ease-in-out infinite;
+  transition:transform .2s ease;
+}
+.comm-btn:hover { transform:scale(1.1); }
+@keyframes comm-pulse {
+  0%,88%,100% { box-shadow:0 0 20px rgba(0,212,255,.35); }
+  94% { box-shadow:0 0 35px rgba(0,212,255,.8), 0 0 70px rgba(0,100,255,.35); }
+}
+.comm-bubble {
+  position:absolute; bottom:70px; right:0;
+  width:285px;
+  background:rgba(3,12,30,.96);
+  backdrop-filter:blur(24px);
+  border:1px solid rgba(0,212,255,.22);
+  border-radius:12px 12px 4px 12px;
+  padding:16px 18px;
+  display:none;
+  box-shadow:0 8px 40px rgba(0,0,0,.5);
+}
+.comm-bubble.open { display:block; animation:pop-in .3s var(--ease-spring); }
+@keyframes pop-in {
+  from { opacity:0; transform:translateY(10px) scale(.94); }
+  to   { opacity:1; transform:translateY(0)   scale(1); }
+}
+.comm-header {
+  font-family:var(--font-m); font-size:.58rem;
+  color:var(--blue); letter-spacing:.3em;
+  padding-bottom:8px; margin-bottom:10px;
+  border-bottom:1px solid rgba(0,212,255,.12);
+}
+.comm-text { font-size:.92rem; color:rgba(200,222,255,.88); line-height:1.75; font-weight:500; }
+
+/* ─────────────────────────────────────────
+   SCROLL REVEAL  (entry: zoom-in from far)
+───────────────────────────────────────── */
+.rv {
+  opacity:0;
+  transform:scale(.88) translateY(32px);
+  transition:
+    opacity  .65s ease,
+    transform .65s var(--ease-spring);
+}
+.rv.in { opacity:1; transform:scale(1) translateY(0); }
+
+/* ─────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────── */
+footer {
+  text-align:center; padding:28px 40px;
+  border-top:1px solid rgba(0,212,255,.06);
+  font-family:var(--font-m); font-size:.62rem;
+  color:rgba(0,212,255,.25); letter-spacing:.15em;
+}
+
+/* ─────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────── */
+@media (max-width:768px) {
+  .nav { padding:0 18px; }
+  .phase-nav { display:none; }
+  .planet-system { width:280px; height:280px; }
+  .hero { padding:100px 20px 60px; }
+  .wrap { padding:60px 20px; }
+  .overview-grid { grid-template-columns:1fr; }
+  .phases-grid   { grid-template-columns:1fr; }
+  .tracks-layout { grid-template-columns:1fr; }
+  .pipe { flex-direction:row; height:40px; }
+  .pipe-tube { min-height:0; width:80px; height:4px; flex:1; }
+  .pipe-tube::after { top:0; width:25%; height:100%; animation:none; }
+  .prizes-grid { grid-template-columns:1fr; }
+  .cta-block { padding:60px 20px 80px; }
+}
+</style>
+</head>
+
+<body>
+<!-- ── Stars canvas ── -->
+<canvas id="star-canvas"></canvas>
+<div class="nebula" id="nebula"></div>
+
+<div class="site">
+
+<!-- ══════════════════ NAVIGATION ══════════════════ -->
+<nav class="nav">
+  <!-- Logo + rocket -->
+  <div class="logo">
+    <div class="rocket-wrap" id="rocket-wrap">
+      <span class="rocket-emoji">🚀</span>
+    </div>
+    星火计划<span class="logo-s1">&nbsp;S1</span>
+  </div>
+
+  <!-- Mission phases -->
+  <div class="phase-nav">
+    <div class="ph-node">
+      <div class="ph-station on">01</div>
+      <div class="ph-label">征集报名</div>
+    </div>
+    <div class="ph-track"></div>
+    <div class="ph-node">
+      <div class="ph-station">02</div>
+      <div class="ph-label">项目研发</div>
+    </div>
+    <div class="ph-track"></div>
+    <div class="ph-node">
+      <div class="ph-station">03</div>
+      <div class="ph-label">星际评审</div>
+    </div>
+    <div class="ph-track"></div>
+    <div class="ph-node">
+      <div class="ph-station">04</div>
+      <div class="ph-label">英雄凯旋</div>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<section class="hero">
+
+  <!-- Planet system -->
+  <div class="planet-system">
+    <div class="atm atm-1"></div>
+    <div class="atm atm-2"></div>
+    <div class="orbit-ring orb-1"></div>
+    <div class="orbit-ring orb-2"></div>
+    <div class="planet-canvas-wrap">
+      <canvas id="planet-canvas" width="220" height="220"></canvas>
+    </div>
+  </div>
+
+  <!-- Copy -->
+  <div class="hero-copy">
+    <div class="scanlines">
+      <div class="hero-eyebrow">MISSION BRIEF // 个人事业部全员</div>
+      <h1 class="hero-h1">星际探索任务<span class="blink">_</span></h1>
+      <div class="hero-h1-sub">AI 创新探索大赛 · SPARK PLAN S1</div>
+      <div class="hero-slug">PERSONAL BU · 2026.01 — 2026.12</div>
+    </div>
+    <div class="hero-meta">
+      <span>个人事业部全员</span>
+      <span>双赛道并行</span>
+      <span>最多5人组队</span>
+      <span>Q2 · Q4 两期</span>
+    </div>
+    <a href="https://f.wps.cn/ksform/w/write/PeNJtqsP#routePromt" target="_blank" class="btn-cta">
+      <span>🚀</span><span>立即报名出征</span>
+    </a>
+  </div>
+</section>
+
+<!-- ══════════════════ OVERVIEW STATS ══════════════════ -->
+<div class="wrap">
+  <div class="sec-head rv">
+    <div class="sec-tag">MISSION OVERVIEW</div>
+    <h2 class="sec-title">大赛背景</h2>
+  </div>
+  <div class="overview-grid">
+    <div class="ov-card rv">
+      <div class="ov-num">01 · SCALE</div>
+      <div class="ov-val">全员</div>
+      <div class="ov-label">个人事业部全体同学均可参赛，可跨部门组队（一级内）</div>
+    </div>
+    <div class="ov-card rv" style="transition-delay:.1s">
+      <div class="ov-num">02 · CYCLE</div>
+      <div class="ov-val">2026</div>
+      <div class="ov-label">全年竞赛周期，Q2 / Q4 举办两期，持续释放创新动能</div>
+    </div>
+    <div class="ov-card rv" style="transition-delay:.2s">
+      <div class="ov-num">03 · GOAL</div>
+      <div class="ov-val">4 项</div>
+      <div class="ov-label">探索场景 · 提升能力 · 发掘人才 · 成果反哺业务创新</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ MISSION PHASES ══════════════════ -->
+<div class="wrap" style="padding-top:0">
+  <div class="sec-head rv">
+    <div class="sec-tag">MISSION TIMELINE</div>
+    <h2 class="sec-title">任务阶段日志</h2>
+  </div>
+  <div class="phases-grid">
+
+    <div class="mission-card rv">
+      <div class="scan-beam"></div>
+      <div class="mission-num">MISSION 01</div>
+      <div class="mission-status on"></div>
+      <div class="mission-title">征集报名</div>
+      <div class="mission-period">◈ 2026.04 — 2026.05</div>
+      <div class="mission-desc">🟢 当前阶段进行中。提交参赛方向与战队组建信息，个人或最多5人组队，设立队长，开启星际征程。</div>
+    </div>
+
+    <div class="mission-card rv" style="transition-delay:.1s">
+      <div class="scan-beam"></div>
+      <div class="mission-num">MISSION 02</div>
+      <div class="mission-status"></div>
+      <div class="mission-title">项目研发</div>
+      <div class="mission-period">◈ 2026.05 — 2026.06 初</div>
+      <div class="mission-desc">能量充能中。各战队深度探索、构建AI原型，完成中期进度汇报，接受导师辅导与迭代优化。</div>
+    </div>
+
+    <div class="mission-card rv" style="transition-delay:.2s">
+      <div class="scan-beam"></div>
+      <div class="mission-num">MISSION 03</div>
+      <div class="mission-status"></div>
+      <div class="mission-title">星际评审</div>
+      <div class="mission-period">◈ 2026.06 中旬</div>
+      <div class="mission-desc">向专家评委团汇报项目成果，按赛道独立评分，严格择优、公正透明。</div>
+    </div>
+
+    <div class="mission-card rv" style="transition-delay:.3s">
+      <div class="scan-beam"></div>
+      <div class="mission-num">MISSION 04</div>
+      <div class="mission-status"></div>
+      <div class="mission-title">英雄凯旋</div>
+      <div class="mission-period">◈ 2026.06 末</div>
+      <div class="mission-desc">颁奖激励典礼，获奖项目获得资源支持、绩效加分与年度评优直通卡，永久记入个人成长档案。</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════ DUAL TRACKS ══════════════════ -->
+<div class="wrap" style="padding-top:0">
+  <div class="sec-head rv">
+    <div class="sec-tag">MISSION MODULES</div>
+    <h2 class="sec-title">双赛道舱模块</h2>
+  </div>
+
+  <div class="tracks-layout rv">
+
+    <!-- Track 1: Power Module -->
+    <div class="track-module trk-power">
+      <span class="trk-icon">⚡</span>
+      <div class="trk-badge">TRACK 01 · 动力舱</div>
+      <div class="trk-title">AI 提效突破<br>星火提效专家</div>
+      <div class="trk-desc">
+        向内优化。结合团队职责，从日常工作与业务拓展中选取具体场景，以工作提效为核心目标——缩短流程周期、减少人工工时、降低错误率、提升交付质量。
+      </div>
+      <div class="trk-tags">
+        <span class="tag">自动化测试</span>
+        <span class="tag">智能客服</span>
+        <span class="tag">AI运营分析</span>
+        <span class="tag">文档自动生成</span>
+        <span class="tag">流程自动化</span>
+      </div>
+    </div>
+
+    <!-- Energy pipe -->
+    <div class="pipe">
+      <div class="pipe-node pipe-node-top"></div>
+      <div class="pipe-label">SYNC</div>
+      <div class="pipe-tube"></div>
+      <div class="pipe-label">DUAL</div>
+      <div class="pipe-node pipe-node-bot"></div>
+    </div>
+
+    <!-- Track 2: Research Module -->
+    <div class="track-module trk-research">
+      <span class="trk-icon">🔭</span>
+      <div class="trk-badge">TRACK 02 · 科研舱</div>
+      <div class="trk-title">AI 创新探索<br>星火探索家</div>
+      <div class="trk-desc">
+        向外突破。基于C端业务场景与核心需求延伸AI能力，依托个人事业部现有产品功能与商业运营体系，开展创新应用设计，探索未知边界。
+      </div>
+      <div class="trk-tags">
+        <span class="tag">AI功能原型</span>
+        <span class="tag">新用户场景</span>
+        <span class="tag">AI增长实验</span>
+        <span class="tag">平台化能力</span>
+        <span class="tag">国际/稻壳/增值</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════ PRIZES ══════════════════ -->
+<div class="wrap" style="padding-top:0">
+  <div class="sec-head rv">
+    <div class="sec-tag">MISSION REWARDS</div>
+    <h2 class="sec-title">星际荣耀奖项</h2>
+  </div>
+  <div class="prizes-grid">
+    <div class="prize-card prize-gold rv">
+      <span class="prize-icon">🥇</span>
+      <div class="prize-name">Gold Award</div>
+      <div class="prize-main">
+        金奖
+        <span class="prize-count">每赛道 1 名</span>
+      </div>
+    </div>
+    <div class="prize-card prize-silver rv" style="transition-delay:.1s">
+      <span class="prize-icon">🥈</span>
+      <div class="prize-name">Silver Award</div>
+      <div class="prize-main">
+        银奖
+        <span class="prize-count">每赛道 2 名</span>
+      </div>
+    </div>
+    <div class="prize-card prize-bronze rv" style="transition-delay:.2s">
+      <span class="prize-icon">🥉</span>
+      <div class="prize-name">Bronze Award</div>
+      <div class="prize-main">
+        铜奖
+        <span class="prize-count">每赛道 3 名</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ REGISTRATION CTA ══════════════════ -->
+<div class="cta-block">
+  <div class="cta-glow"></div>
+  <div class="rv">
+    <div class="cta-tag">LAUNCH SEQUENCE READY</div>
+    <h2 class="cta-h2">准备好出征了吗？</h2>
+    <p class="cta-sub">2026年是AI创新的关键之年。你的想法，就是照亮星际的那一粒火种。</p>
+    <a href="https://f.wps.cn/ksform/w/write/PeNJtqsP#routePromt" target="_blank" class="btn-cta-lg">
+      <span>🚀</span><span>立即报名 · JOIN MISSION</span>
+    </a>
+  </div>
+</div>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer>
+  星火计划 S1 · 个人事业部AI创新探索大赛 · 2026.01 — 2026.12 &nbsp;·&nbsp; 指挥总部 个人事业部
+</footer>
+
+</div><!-- /site -->
+
+<!-- ══════════════════ COMMUNICATOR WIDGET ══════════════════ -->
+<div class="comm" id="comm">
+  <div class="comm-bubble" id="comm-bubble">
+    <div class="comm-header">📡 COMMS · 指挥部通讯</div>
+    <div class="comm-text" id="comm-text">...</div>
+  </div>
+  <div class="comm-btn" id="comm-btn" title="通讯器">🤖</div>
+</div>
+
+<!-- ══════════════════ SCRIPTS ══════════════════ -->
+<script>
+/* ─── Stars ─── */
+(function(){
+  const c = document.getElementById('star-canvas');
+  const ctx = c.getContext('2d');
+  function resize(){ c.width = innerWidth; c.height = innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+
+  const STARS = Array.from({length:320}, () => ({
+    xr: Math.random(), yr: Math.random(),
+    r:  Math.random() * 1.4 + .25,
+    a:  Math.random() * .7 + .25,
+    ts: Math.random() * .025 + .006,
+    to: Math.random() * Math.PI * 2,
+  }));
+
+  let t = 0;
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    t += .012;
+    STARS.forEach(s => {
+      const flicker = .45 + .55 * Math.sin(t * s.ts * 80 + s.to);
+      ctx.save();
+      ctx.globalAlpha = s.a * flicker;
+      ctx.fillStyle = '#ddeeff';
+      ctx.beginPath();
+      ctx.arc(s.xr * c.width, s.yr * c.height, s.r, 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ─── Parallax nebula + star layer ─── */
+(function(){
+  const nebula = document.getElementById('nebula');
+  const sc     = document.getElementById('star-canvas');
+  window.addEventListener('scroll', () => {
+    const y = scrollY;
+    nebula.style.transform = `translateY(${y * .28}px)`;
+    sc.style.transform     = `translateY(${y * .08}px)`;
+  }, {passive:true});
+})();
+
+/* ─── Rocket particles ─── */
+(function(){
+  const wrap = document.getElementById('rocket-wrap');
+  for(let i=0; i<10; i++){
+    const p = document.createElement('div');
+    p.className = 'prt';
+    const sz = Math.random() * 2.5 + 1;
+    p.style.cssText = [
+      `width:${sz}px`, `height:${sz}px`,
+      `border-radius:50%`,
+      `background:${['#00d4ff','#0088ff','#ffffff','#88ddff'][i%4]}`,
+    ].join(';');
+    // keyframe via Web Animations API
+    const angle = (Math.PI * .7) + (Math.random()-.5) * .9;
+    const dist  = 12 + Math.random() * 14;
+    const dur   = 500 + Math.random() * 700;
+    const delay = Math.random() * dur;
+    function anim(el, d, dl){
+      el.animate([
+        {transform:'translate(2px,2px) scale(1)', opacity:1},
+        {transform:`translate(${Math.cos(angle)*dist}px,${Math.sin(angle)*dist}px) scale(0)`, opacity:0},
+      ], {duration:d, delay:dl, iterations:Infinity, easing:'ease-out'});
+    }
+    anim(p, dur, delay);
+    wrap.appendChild(p);
+  }
+})();
+
+/* ─── Planet canvas (neural-net texture) ─── */
+(function(){
+  const pc  = document.getElementById('planet-canvas');
+  const ctx = pc.getContext('2d');
+  const W = pc.width, H = pc.height;
+  const cx = W/2, cy = H/2, R = W/2 - 4;
+  let angle = 0;
+
+  // pre-bake fixed neural-net node positions
+  const NODES = Array.from({length:22}, (_,i) => {
+    const a = (i/22)*Math.PI*2 + 1.3;
+    const r = (.3 + (i%3)*.22) * R;
+    return {
+      x: cx + Math.cos(a)*r + Math.sin(a*2.3+i)*12,
+      y: cy + Math.sin(a)*r + Math.cos(a*1.9+i)*12,
+    };
+  });
+
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+
+    // clip to circle
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.clip();
+
+    // base gradient
+    const bg = ctx.createRadialGradient(cx-R*.25,cy-R*.25,0, cx,cy,R);
+    bg.addColorStop(0,'rgba(60,130,255,.3)');
+    bg.addColorStop(.4,'rgba(15,35,110,.85)');
+    bg.addColorStop(.75,'rgba(50,10,130,.85)');
+    bg.addColorStop(1,'rgba(4,8,30,1)');
+    ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+
+    // rotating neural net layer
+    ctx.save();
+    ctx.translate(cx,cy); ctx.rotate(angle); ctx.translate(-cx,-cy);
+
+    // connections
+    ctx.lineWidth = .6;
+    for(let i=0;i<NODES.length;i++){
+      for(let j=i+1;j<NODES.length;j++){
+        const d = Math.hypot(NODES[i].x-NODES[j].x, NODES[i].y-NODES[j].y);
+        if(d < R*.72){
+          const alpha = .28*(1-d/(R*.72));
+          ctx.strokeStyle = `rgba(0,212,255,${alpha})`;
+          ctx.beginPath();
+          ctx.moveTo(NODES[i].x, NODES[i].y);
+          ctx.lineTo(NODES[j].x, NODES[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+    // node dots
+    NODES.forEach(n => {
+      const g = ctx.createRadialGradient(n.x,n.y,0, n.x,n.y,4);
+      g.addColorStop(0,'rgba(0,212,255,.9)');
+      g.addColorStop(1,'rgba(0,212,255,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(n.x,n.y,4,0,Math.PI*2); ctx.fill();
+    });
+    ctx.restore();
+
+    // atmosphere rim
+    const rim = ctx.createRadialGradient(cx,cy,R*.82, cx,cy,R);
+    rim.addColorStop(0,'transparent');
+    rim.addColorStop(1,'rgba(0,100,255,.22)');
+    ctx.fillStyle = rim; ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.fill();
+
+    ctx.restore(); // unclip
+    angle += .0025;
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+/* ─── Orbit satellites canvas (removed) ─── */
+if(false)(function(){
+  const c   = document.getElementById('orbit-canvas');
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  const cx = W/2, cy = H/2;
+
+  // Two elliptical orbits centered on planet center
+  // orbit-1 (blue, track 1): semi-major a=148, semi-minor b=54, tilt=0
+  // orbit-2 (purple, track 2): semi-major a=173, semi-minor b=64, tilt=40°
+  const ORBITS = [
+    { a:148, b:52,  rot:0,              speed: 0.009, color:'#00d4ff', icon:'⚡', label:'赛道一  动力舱', t: 0 },
+    { a:170, b:62,  rot:40*Math.PI/180, speed:-0.006, color:'#a855f7', icon:'🔭', label:'赛道二  科研舱', t: Math.PI },
+  ];
+
+  // Satellite trail particles
+  const trails = ORBITS.map(() => []);
+
+  function getPos(orb, angle){
+    const ex = orb.a * Math.cos(angle);
+    const ey = orb.b * Math.sin(angle);
+    return {
+      x: cx + ex * Math.cos(orb.rot) - ey * Math.sin(orb.rot),
+      y: cy + ex * Math.sin(orb.rot) + ey * Math.cos(orb.rot),
+    };
+  }
+
+  function rrect(c2, x, y, w, h, r){
+    c2.beginPath();
+    c2.moveTo(x+r,y); c2.lineTo(x+w-r,y);
+    c2.quadraticCurveTo(x+w,y,x+w,y+r);
+    c2.lineTo(x+w,y+h-r);
+    c2.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    c2.lineTo(x+r,y+h);
+    c2.quadraticCurveTo(x,y+h,x,y+h-r);
+    c2.lineTo(x,y+r);
+    c2.quadraticCurveTo(x,y,x+r,y);
+    c2.closePath();
+  }
+
+  function drawSatellite(x, y, tang, orb, trailArr){
+    const col = orb.color;
+
+    // update trail
+    trailArr.push({x, y, a:0.7});
+    if(trailArr.length > 18) trailArr.shift();
+
+    // draw trail
+    trailArr.forEach((pt, i) => {
+      const alpha = (i / trailArr.length) * 0.45;
+      const sz = (i / trailArr.length) * 3;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = col;
+      ctx.shadowBlur = 4; ctx.shadowColor = col;
+      ctx.beginPath(); ctx.arc(pt.x, pt.y, sz, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
+    });
+
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(tang);
+
+    // outer glow ring
+    ctx.shadowBlur = 20; ctx.shadowColor = col;
+    ctx.globalAlpha = 0.25;
+    ctx.strokeStyle = col; ctx.lineWidth = 10;
+    ctx.beginPath(); ctx.arc(0,0,12,0,Math.PI*2); ctx.stroke();
+
+    // body
+    ctx.shadowBlur = 18; ctx.shadowColor = col;
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = col;
+    rrect(ctx, -9, -6, 18, 12, 3);
+    ctx.fill();
+
+    // solar panels (left + right)
+    ctx.globalAlpha = 0.6;
+    ctx.fillStyle = col;
+    // left panel
+    ctx.fillRect(-26, -4, 15, 8);
+    // right panel
+    ctx.fillRect(11, -4, 15, 8);
+
+    // panel grid lines
+    ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = 1; ctx.globalAlpha = 0.8;
+    [-21,-17,-13].forEach(lx => {
+      ctx.beginPath(); ctx.moveTo(lx,-4); ctx.lineTo(lx,4); ctx.stroke();
+    });
+    [13,17,21].forEach(lx => {
+      ctx.beginPath(); ctx.moveTo(lx,-4); ctx.lineTo(lx,4); ctx.stroke();
+    });
+
+    // cockpit window
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = 'rgba(255,255,255,0.95)';
+    ctx.shadowBlur = 8; ctx.shadowColor = '#ffffff';
+    ctx.beginPath(); ctx.arc(0,0,3,0,Math.PI*2); ctx.fill();
+
+    // center dot
+    ctx.fillStyle = col;
+    ctx.shadowBlur = 0;
+    ctx.beginPath(); ctx.arc(0,0,1.2,0,Math.PI*2); ctx.fill();
+
+    ctx.restore();
+
+    // label — always upright, pushed outward from planet center
+    const dx = x - cx, dy = y - cy;
+    const dist = Math.hypot(dx, dy);
+    const push = 36;
+    const lx = x + (dx/dist) * push;
+    const ly = y + (dy/dist) * push;
+    const align = dx >= 0 ? 'left' : 'right';
+
+    ctx.save();
+    ctx.font = '700 12px "Plus Jakarta Sans", "Noto Sans SC", sans-serif';
+    ctx.textAlign = align;
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = col;
+    ctx.globalAlpha = 0.95;
+    ctx.shadowBlur = 10; ctx.shadowColor = col;
+    ctx.fillText(`${orb.icon} ${orb.label}`, lx, ly);
+    ctx.restore();
+  }
+
+  function frame(){
+    ctx.clearRect(0, 0, W, H);
+
+    ORBITS.forEach((orb, i) => {
+      orb.t += orb.speed;
+
+      // draw orbit path (faint ellipse)
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(orb.rot);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, orb.a, orb.b, 0, 0, Math.PI*2);
+      ctx.strokeStyle = orb.color;
+      ctx.globalAlpha = 0.14;
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([4,6]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+
+      // satellite position + tangent angle
+      const pos  = getPos(orb, orb.t);
+      const posN = getPos(orb, orb.t + 0.015);
+      const tang = Math.atan2(posN.y - pos.y, posN.x - pos.x);
+      drawSatellite(pos.x, pos.y, tang, orb, trails[i]);
+    });
+
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+/* ─── Scroll reveal ─── */
+(function(){
+  const els = document.querySelectorAll('.rv');
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target); }
+    });
+  },{threshold:.08, rootMargin:'0px 0px -40px 0px'});
+  els.forEach(el=>obs.observe(el));
+})();
+
+/* ─── Communicator ─── */
+(function(){
+  const btn    = document.getElementById('comm-btn');
+  const bubble = document.getElementById('comm-bubble');
+  const text   = document.getElementById('comm-text');
+  let open = false, idx = 0;
+
+  const MSGS = [
+    '报告指挥官！第一阶段能量充能87%，建议<strong>立即组队出征</strong>！赶紧点报名！🚀',
+    '系统检测：无论你擅长提效还是创新，双赛道都有你的位置——别犹豫了指挥官！⚡',
+    '警告：拖延症病毒正在扩散！立即点击报名按钮可有效阻断病毒传播，概率99.9%！🛡️',
+    '好消息！获奖项目将获得<strong>绩效加分+年度评优直通卡</strong>，你的职业生涯即将起飞！🌟',
+    '数据分析完毕：2026年不参加星火计划的遗憾概率=100%。建议立即行动，指挥官！📊',
+    '最多5人组队，可跨部门！快去物色你的战队队友，星际之旅等你来开启！🛸',
+  ];
+
+  btn.addEventListener('click', ()=>{
+    open = !open;
+    if(open){
+      text.innerHTML = MSGS[idx % MSGS.length]; idx++;
+      bubble.classList.add('open');
+    } else {
+      bubble.classList.remove('open');
+    }
+  });
+
+  // auto-close on outside click
+  document.addEventListener('click', e=>{
+    if(open && !document.getElementById('comm').contains(e.target)){
+      open=false; bubble.classList.remove('open');
+    }
+  });
+})();
+</script>
+</body>
+</html>
