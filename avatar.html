@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>星火S1 · 群头像</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Noto+Sans+SC:wght@900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh;}
+
+.avatar{
+  width:500px;height:500px;
+  position:relative;overflow:hidden;flex-shrink:0;
+  background:#000510;
+}
+
+/* ── Deep space bg ── */
+.bg-base{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 30%, rgba(0,60,160,.55) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 60% at 15% 80%, rgba(100,0,180,.3) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 50% at 85% 75%, rgba(0,30,120,.25) 0%, transparent 55%),
+    #000814;
+}
+
+/* diagonal energy streaks */
+.streak{position:absolute;pointer-events:none;}
+.s1{
+  width:2px;height:280px;top:-30px;left:38%;
+  background:linear-gradient(180deg,transparent,rgba(0,210,255,.55),transparent);
+  transform:rotate(22deg);filter:blur(.5px);
+}
+.s2{
+  width:1px;height:200px;top:20px;left:58%;
+  background:linear-gradient(180deg,transparent,rgba(168,85,247,.5),transparent);
+  transform:rotate(-15deg);filter:blur(.4px);
+}
+.s3{
+  width:1.5px;height:240px;top:-10px;left:72%;
+  background:linear-gradient(180deg,transparent,rgba(0,180,255,.3),transparent);
+  transform:rotate(30deg);filter:blur(.6px);
+}
+.s4{
+  width:1px;height:180px;top:60px;left:22%;
+  background:linear-gradient(180deg,transparent,rgba(200,80,255,.35),transparent);
+  transform:rotate(-25deg);filter:blur(.4px);
+}
+
+/* ── Canvas stars ── */
+#sc{position:absolute;inset:0;}
+
+/* ── Central glow orb ── */
+.orb-wrap{
+  position:absolute;top:50px;left:50%;transform:translateX(-50%);
+  width:220px;height:220px;
+}
+/* outer halo rings */
+.halo{
+  position:absolute;top:50%;left:50%;border-radius:50%;border:1px solid;transform:translate(-50%,-50%);
+}
+.h1{width:220px;height:220px;border-color:rgba(0,212,255,.5);
+    box-shadow:0 0 0 1px rgba(0,212,255,.08),0 0 30px rgba(0,212,255,.2);}
+.h2{width:260px;height:260px;border-color:rgba(0,212,255,.18);}
+.h3{width:300px;height:300px;border-color:rgba(168,85,247,.12);}
+/* orbit ring tilt */
+.orbit{
+  position:absolute;top:50%;left:50%;
+  border-radius:50%;border:1.5px solid rgba(0,212,255,.45);
+  width:240px;height:60px;
+  transform:translate(-50%,-50%) rotateX(0deg);
+  box-shadow:0 0 12px rgba(0,212,255,.2);
+}
+#planet{display:block;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);}
+
+/* ── TOP BADGE ── */
+.top-badge{
+  position:absolute;top:22px;left:0;right:0;
+  text-align:center;
+  font-family:'Orbitron',monospace;font-size:.58rem;font-weight:900;
+  letter-spacing:.45em;text-transform:uppercase;
+  color:rgba(0,212,255,.55);
+}
+
+/* ── MAIN TEXT BLOCK ── */
+.text-block{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:0 28px 28px;
+  text-align:center;
+}
+/* glow bar above text */
+.glow-bar{
+  width:100%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,212,255,.5),rgba(168,85,247,.4),transparent);
+  margin-bottom:16px;
+}
+.main-cn{
+  font-family:'Noto Sans SC',sans-serif;
+  font-size:2.85rem;font-weight:900;line-height:1.0;
+  letter-spacing:-.02em;
+  background:linear-gradient(135deg, #fff 0%, #7df9ff 30%, #c084fc 65%, #ff79c6 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  /* strong text glow via drop-shadow on wrap */
+  margin-bottom:8px;display:block;
+}
+.main-cn-wrap{
+  filter:drop-shadow(0 0 18px rgba(0,212,255,.7)) drop-shadow(0 0 35px rgba(168,85,247,.4));
+}
+.sub-en{
+  font-family:'Orbitron',monospace;font-size:.72rem;font-weight:900;
+  letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(200,230,255,.55);
+  margin-bottom:6px;display:block;
+}
+.sub-cn{
+  font-family:'Noto Sans SC',sans-serif;font-size:.78rem;font-weight:700;
+  color:rgba(160,200,255,.45);letter-spacing:.08em;
+}
+
+/* corner marks */
+.cm{position:absolute;width:18px;height:18px;}
+.cm-tl{top:14px;left:14px;border-top:2px solid rgba(0,212,255,.55);border-left:2px solid rgba(0,212,255,.55);}
+.cm-tr{top:14px;right:14px;border-top:2px solid rgba(168,85,247,.45);border-right:2px solid rgba(168,85,247,.45);}
+.cm-bl{bottom:14px;left:14px;border-bottom:2px solid rgba(168,85,247,.45);border-left:2px solid rgba(168,85,247,.45);}
+.cm-br{bottom:14px;right:14px;border-bottom:2px solid rgba(0,212,255,.55);border-right:2px solid rgba(0,212,255,.55);}
+
+/* S1 badge top-right of orb */
+.s1-badge{
+  position:absolute;top:58px;right:82px;
+  font-family:'Orbitron',monospace;font-size:.55rem;font-weight:900;
+  color:#00d4ff;letter-spacing:.15em;
+  background:rgba(0,20,50,.85);
+  border:1px solid rgba(0,212,255,.45);
+  padding:3px 7px;border-radius:3px;
+  box-shadow:0 0 8px rgba(0,212,255,.3);
+  z-index:10;
+}
+</style>
+</head>
+<body>
+<div class="avatar" id="av">
+  <!-- bg -->
+  <div class="bg-base"></div>
+  <div class="streak s1"></div>
+  <div class="streak s2"></div>
+  <div class="streak s3"></div>
+  <div class="streak s4"></div>
+  <canvas id="sc"></canvas>
+
+  <!-- corners -->
+  <div class="cm cm-tl"></div><div class="cm cm-tr"></div>
+  <div class="cm cm-bl"></div><div class="cm cm-br"></div>
+
+  <!-- top badge -->
+  <div class="top-badge">SPARK · PLAN · S1</div>
+
+  <!-- S1 tag -->
+  <div class="s1-badge">SEASON 1</div>
+
+  <!-- orb -->
+  <div class="orb-wrap">
+    <div class="halo h3"></div>
+    <div class="halo h2"></div>
+    <div class="orbit"></div>
+    <div class="halo h1"></div>
+    <canvas id="planet" width="170" height="170"></canvas>
+  </div>
+
+  <!-- text -->
+  <div class="text-block">
+    <div class="glow-bar"></div>
+    <div class="main-cn-wrap">
+      <span class="main-cn">星际探索任务</span>
+    </div>
+    <span class="sub-en">AI Innovation · 2026</span>
+    <span class="sub-cn">个人事业部 · 创新大赛交流群</span>
+  </div>
+</div>
+
+<script>
+/* Stars – static */
+(function(){
+  const c=document.getElementById('sc');
+  const av=document.getElementById('av');
+  c.width=av.offsetWidth; c.height=av.offsetHeight;
+  Object.assign(c.style,{position:'absolute',top:'0',left:'0',zIndex:'1'});
+  const ctx=c.getContext('2d');
+  let s=9999;
+  const rng=()=>{s=(s*1664525+1013904223)&0xffffffff;return(s>>>0)/0xffffffff;};
+  for(let i=0;i<260;i++){
+    const x=rng()*c.width,y=rng()*c.height;
+    const r=rng()*1.5+.15,a=rng()*.8+.15;
+    ctx.save();ctx.globalAlpha=a;
+    ctx.fillStyle=rng()>.7?'#c0e8ff':'#ffffff';
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();ctx.restore();
+  }
+  // a few bright ones
+  [[80,40],[420,70],[50,300],[460,350],[250,450]].forEach(([x,y])=>{
+    const g=ctx.createRadialGradient(x,y,0,x,y,3);
+    g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();
+  });
+})();
+
+/* Planet */
+(function(){
+  const pc=document.getElementById('planet');
+  const ctx=pc.getContext('2d');
+  const W=pc.width,H=pc.height,cx=W/2,cy=H/2,R=W/2-2;
+
+  ctx.save();
+  ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.clip();
+
+  /* base gradient – vivid */
+  const bg=ctx.createRadialGradient(cx-R*.3,cy-R*.3,0,cx,cy,R);
+  bg.addColorStop(0,'rgba(0,180,255,.6)');
+  bg.addColorStop(.25,'rgba(20,60,200,.9)');
+  bg.addColorStop(.6,'rgba(80,0,200,.95)');
+  bg.addColorStop(1,'rgba(10,0,40,1)');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+
+  /* highlight spot */
+  const hl=ctx.createRadialGradient(cx-R*.35,cy-R*.35,0,cx-R*.35,cy-R*.35,R*.6);
+  hl.addColorStop(0,'rgba(100,220,255,.45)');hl.addColorStop(1,'transparent');
+  ctx.fillStyle=hl;ctx.fillRect(0,0,W,H);
+
+  /* constellation nodes */
+  const pts=[
+    [.45,.28],[.6,.35],[.55,.5],[.4,.55],[.3,.4],[.5,.42],
+    [.65,.55],[.38,.32],[.7,.3],[.25,.6],[.6,.65],[.35,.68],
+  ];
+  const nodes=pts.map(([nx,ny])=>({x:nx*W,y:ny*H}));
+  ctx.lineWidth=.8;
+  for(let i=0;i<nodes.length;i++){
+    for(let j=i+1;j<nodes.length;j++){
+      const d=Math.hypot(nodes[i].x-nodes[j].x,nodes[i].y-nodes[j].y);
+      if(d<W*.38){
+        ctx.strokeStyle=`rgba(0,230,255,${.55*(1-d/(W*.38))})`;
+        ctx.beginPath();ctx.moveTo(nodes[i].x,nodes[i].y);ctx.lineTo(nodes[j].x,nodes[j].y);ctx.stroke();
+      }
+    }
+  }
+  nodes.forEach(n=>{
+    const g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,4);
+    g.addColorStop(0,'rgba(0,240,255,1)');g.addColorStop(1,'rgba(0,240,255,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(n.x,n.y,4,0,Math.PI*2);ctx.fill();
+  });
+
+  /* rim glow */
+  const rim=ctx.createRadialGradient(cx,cy,R*.75,cx,cy,R);
+  rim.addColorStop(0,'transparent');rim.addColorStop(1,'rgba(0,160,255,.35)');
+  ctx.fillStyle=rim;ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.fill();
+
+  ctx.restore();
+
+  /* outer glow ring drawn outside clip */
+  const glow=ctx.createRadialGradient(cx,cy,R*.9,cx,cy,R+18);
+  glow.addColorStop(0,'rgba(0,180,255,.25)');glow.addColorStop(1,'transparent');
+  ctx.fillStyle=glow;ctx.beginPath();ctx.arc(cx,cy,R+18,0,Math.PI*2);ctx.fill();
+})();
+</script>
+</body>
+</html>
